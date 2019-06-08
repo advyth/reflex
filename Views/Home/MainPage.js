@@ -1,8 +1,9 @@
 import React from 'react';
 import axios from 'axios';
-import {StatusBar, StyleSheet, Text, Dimensions, ActivityIndicator, TextInput,View, DrawerLayoutAndroid,TouchableOpacity,FlatList, RefreshControl} from 'react-native';
+import {PermissionsAndroid,StatusBar, StyleSheet, Text, Dimensions, ActivityIndicator, TextInput,View, DrawerLayoutAndroid,TouchableOpacity,FlatList, RefreshControl, Modal} from 'react-native';
 import Image from 'react-native-scalable-image';
 import HTML from 'react-native-render-html';
+
 
 const heart = require("../../assets/heart-icon.png");
 const menu_icon = require("../../assets/menu-icon.png");
@@ -26,6 +27,7 @@ class MainPage extends React.Component
               search_text : "",
               subreddit_exists : null,
               noMoreData : false,
+              modalVisible : false,
               
           }
           this.navigateToWebPage = this.navigateToWebPage.bind(this);
@@ -37,14 +39,35 @@ class MainPage extends React.Component
           this.renderFooter = this.renderFooter.bind(this);
           this.renderSideBar = this.renderSideBar.bind(this);
           this.handleSubredditSearch = this.handleSubredditSearch.bind(this);
-          this.downloadFile = this.downloadFile.bind(this);
           this.renderList = this.renderList.bind(this);
+          this.requestStoragePermission = this.requestStoragePermission.bind(this);
 
+      }
+      async requestStoragePermission()
+      {
+        try{
+          const status = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+            {
+              title : "Reflex file permission",
+              message : "Reflex needs file access to save pictures",
+              buttonNegative : 'Don\'t allow',
+              buttonPositive : 'Allow'
+
+            },
+          );
+
+        }
+        catch(err)
+        {
+          console.warn(err);
+        }
       }
       async componentDidMount() //load the fonts asynchronously
       {
         
         this.setState({fontLoaded : true}); //set fontLoaded states to true after loading is done
+        this.requestStoragePermission();
         
       }
       async handleSubredditSearch(text)
@@ -58,13 +81,9 @@ class MainPage extends React.Component
       {
         this.fetchData();
       }
-      async downloadFile(uri)
-      {
-        this.navigateToWebPage(uri);
-      }
+    
       async refresh()
       {
-
         this.setState({
           isRefreshing : true,
         });
@@ -87,6 +106,7 @@ class MainPage extends React.Component
                 isLoading : false,
                 isRefreshing : false,
                 subreddit_exists : true,
+                modalVisible  :false,
               });
             }
             else
@@ -98,6 +118,7 @@ class MainPage extends React.Component
                 isLoading : false,
                 isRefreshing : false,
                 subreddit_exists : true,
+                modalVisible  :false,
               });
             }
           }
@@ -106,6 +127,7 @@ class MainPage extends React.Component
             //alert("Subreddit does not exist");
             console.log(response.data.data.children[0].kind);
             self.setState({
+              modalVisible  :false,
               subreddit_exists : false,
             });
           }
@@ -121,9 +143,13 @@ class MainPage extends React.Component
             });
         });
       }
-      navigateToWebPage(url)
+      navigateToWebPage(url, type, name)
       {
-        this.props.navigation.navigate('webPage',{url : url});
+        this.props.navigation.navigate('webPage',{
+          url : url,
+          type : type,
+          name : name
+        });
       }
       async setLayout(event)
       {
@@ -149,7 +175,7 @@ class MainPage extends React.Component
                 <Text style={styles.subreddit}>r/{item.data.subreddit}</Text>
                 {item.data.over_18?(<Text style={{color:"red", fontFamily:"Quicksand-Bold", marginLeft : 8,marginBottom : 8}}>nsfw</Text>):(null)}
                 <TouchableOpacity onLongPress={()=>{
-                  this.downloadFile(item.data.url)
+                  this.navigateToWebPage(item.data.url,"image", item.data.title);
                 }}>
                   <Image  width={this.state.view_width} source={{uri : item.data.url}} />
                 </TouchableOpacity>   
@@ -258,6 +284,7 @@ class MainPage extends React.Component
                 <View style={styles.sideMenuHeaderBar}>
                   <Text style={styles.sideMenuHeaderText}>subreddits</Text>
                 </View>
+
                 <Text style={{color : "#0090ab", fontFamily : "Quicksand-Bold"}}>Search</Text>
                 <TextInput ref={(ref)=>{
                   this.searchBarRef = ref;
@@ -276,8 +303,12 @@ class MainPage extends React.Component
       }
       async setUrl(subreddit)
       {
+        
         if(subreddit != null)
         {
+          this.setState({
+            modalVisible : true,
+          });
           await this.setState({
             url : "https://reddit.com/r/"+subreddit+".json",
             current_subreddit : subreddit,
@@ -339,6 +370,17 @@ class MainPage extends React.Component
         {
           return(
             <View style={{backgroundColor : "black", flex:1}}>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={this.state.modalVisible}>
+                        <View style={{flex : 1,justifyContent : "center"}}>
+                            <View style={{alignSelf : "center",backgroundColor : "#222632", height : "20%",justifyContent : "center", width : "80%", paddingBottom : 20, borderRadius : 20}}>
+                                <Text style={{alignSelf : "center", color : "white", fontFamily:"Quicksand-Bold",marginBottom : 20}}>Loading subreddit</Text>
+                                <ActivityIndicator size="large" color="#0090ab" />
+                            </View>
+                        </View>
+            </Modal>
             <StatusBar backgroundColor="#001316"/>
               <DrawerLayoutAndroid
               ref={(ref)=>{this.drawerRef = ref}}
