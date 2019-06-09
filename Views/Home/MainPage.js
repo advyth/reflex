@@ -139,6 +139,7 @@ class MainPage extends React.Component
           //alert("Subreddit does not exist");
           console.log(error.message);
             self.setState({
+              modalVisible : false,
               subreddit_exists : false,
             });
         });
