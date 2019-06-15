@@ -14,7 +14,6 @@ class WebPage extends React.Component
     {
         super(props);
         this.state = {
-            fontLoaded : false,
             modalVisible : false,
         }
         this.downloadFile = this.downloadFile.bind(this);
@@ -47,11 +46,7 @@ class WebPage extends React.Component
         }
         
     }
-    async componentDidMount()
-    {
-        
-          this.setState({fontLoaded : true}); //set fontLoaded states to true after loading is done
-    }
+   
     render()
     {
         const {navigation} = this.props;
@@ -59,40 +54,32 @@ class WebPage extends React.Component
         const urlParsed = new Url(url);
         var hostname = urlParsed.protocol +"//"+ urlParsed.hostname;
         const type = navigation.getParam('type', "default");
-        if(this.state.fontLoaded)
-        {
-            return(<View style={styles.webViewContainer}>
-                    <Modal
-                        animationType="fade"
-                        transparent={true}
-                        visible={this.state.modalVisible}
-                    >
-                        <View style={{flex : 1,justifyContent : "center"}}>
-                            <View style={{alignSelf : "center",backgroundColor : "#222632", height : "20%",justifyContent : "center", width : "80%", paddingBottom : 20, borderRadius : 20}}>
-                                <Text style={{alignSelf : "center", color : "white", fontFamily:"Quicksand-Bold",marginBottom : 20}}>Downloading file</Text>
-                                <ActivityIndicator size="large" color="#0090ab" />
-                            </View>
+        return(<View style={styles.webViewContainer}>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={this.state.modalVisible}
+                >
+                    <View style={{flex : 1,justifyContent : "center"}}>
+                        <View style={{alignSelf : "center",backgroundColor : "#222632", height : "20%",justifyContent : "center", width : "80%", paddingBottom : 20, borderRadius : 20}}>
+                            <Text style={{alignSelf : "center", color : "white", fontFamily:"Quicksand-Bold",marginBottom : 20}}>Downloading file</Text>
+                            <ActivityIndicator size="large" color="#0090ab" />
                         </View>
-                    </Modal>
-                    <View style={{flexDirection : 'row', justifyContent : 'center'}}>
-                        <Image style={{width : 10, height : 10,marginTop : 6, marginRight : 5}} source={secureImage}/>
-                        <Text style={styles.containerText}>{hostname}</Text></View>
-                        <WebView style={styles.webView} source={{uri : url}}/>
-                        {type=="image"?(<TouchableOpacity onPress={()=>{
-                            this.downloadFile();
-                        }}>
-                            <View style={{flexDirection : 'row', justifyContent : 'center', paddingTop : 20, marginBottom : 5}}>
-                                <Image style={{width : 25, height : 25}} source={downloadImage} />
-                            </View>
-                        </TouchableOpacity>):(null)}
-                </View>       
-              );
-        }
-        else
-        {
-            return null;
-        }
-        
+                    </View>
+                </Modal>
+                <View style={{flexDirection : 'row', justifyContent : 'center'}}>
+                    <Image style={{width : 10, height : 10,marginTop : 6, marginRight : 5}} source={secureImage}/>
+                    <Text style={styles.containerText}>{hostname}</Text></View>
+                    <WebView style={styles.webView} source={{uri : url}}/>
+                    {type=="image"?(<TouchableOpacity onPress={()=>{
+                        this.downloadFile();
+                    }}>
+                        <View style={{flexDirection : 'row', justifyContent : 'center', paddingTop : 20, marginBottom : 5}}>
+                            <Image style={{width : 25, height : 25}} source={downloadImage} />
+                        </View>
+                    </TouchableOpacity>):(null)}
+            </View>       
+            );        
     }
 }
 export default WebPage;

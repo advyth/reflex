@@ -170,23 +170,36 @@ class MainPage extends React.Component
         {
           return(
             <View onLayout={this.setLayout} style={styles.postContainer}>
-               
+                <TouchableOpacity onPress={()=>{
+              const postData = {
+                title : item.data.title,
+                author : item.data.author_fullname,
+                score : item.data.score,
+                silver : item.data.gildings.gid_1,
+                gold : item.data.gildings.gid_2,
+                platinum : item.data.gildings.gid_3,
+                link : "https://reddit.com" + item.data.permalink + ".json",
+                url : item.data.url,
+                type : "image",
+                nsfw : item.data.over_18,
+              }
+              this.props.navigation.navigate('viewPost',postData);
+            }} onLongPress={()=>{
+              this.navigateToWebPage(item.data.url,"image", item.data.title);
+            }}>
                 <Text style={styles.titleText}>{item.data.title}</Text>
                 <Text style={styles.username}>u/{item.data.author_fullname}</Text>
                 <Text style={styles.subreddit}>r/{item.data.subreddit}</Text>
                 {item.data.over_18?(<Text style={{color:"red", fontFamily:"Quicksand-Bold", marginLeft : 8,marginBottom : 8}}>nsfw</Text>):(null)}
-                <TouchableOpacity onLongPress={()=>{
-                  this.navigateToWebPage(item.data.url,"image", item.data.title);
-                }}>
                   <Image  width={this.state.view_width} source={{uri : item.data.url}} />
-                </TouchableOpacity>   
-                <View style={styles.info}>
+                  <View style={styles.info}>
                   <Image height={22} width={22} style={styles.heart} source={heart} />
                   <Text style={styles.upvotes}>{item.data.ups}</Text>
                   {item.data.gildings.gid_1 != null?(<Text style={styles.silver}>Silver x{item.data.gildings.gid_1}</Text>):(null)}
                   {item.data.gildings.gid_2 != null?(<Text style={styles.gold}>Gold x{item.data.gildings.gid_2}</Text>):(null)}
                   {item.data.gildings.gid_3 != null?(<Text style={styles.platinum}>Platinum x{item.data.gildings.gid_3}</Text>):(null)}
                 </View>
+                </TouchableOpacity>
             </View>
           );
         }
@@ -203,6 +216,24 @@ class MainPage extends React.Component
           html = html.replace(/&amp;amp;/g,'&');
           return(
             <View style={styles.postContainer}>
+              <TouchableOpacity onPress={()=>{
+              const postData = {
+                title : item.data.title,
+                author : item.data.author_fullname,
+                score : item.data.score,
+                silver : item.data.gildings.gid_1,
+                gold : item.data.gildings.gid_2,
+                platinum : item.data.gildings.gid_3,
+                link : "https://reddit.com" + item.data.permalink + ".json",
+                url : item.data.url,
+                type : "selftext",
+                selftext : item.data.selftext,
+                nsfw : item.data.over_18,
+              }
+              this.props.navigation.navigate('viewPost',postData);
+            }} onLongPress={()=>{
+              this.navigateToWebPage(item.data.url,"image", item.data.title);
+            }}>
                 <Text style={styles.titleText}>{item.data.title}</Text>
                 <Text style={styles.username}>u/{item.data.author_fullname}</Text>
                 <Text style={styles.subreddit}>r/{item.data.subreddit}</Text>
@@ -215,6 +246,7 @@ class MainPage extends React.Component
                   {item.data.gildings.gid_2 != null?(<Text style={styles.gold}>Gold x{item.data.gildings.gid_2}</Text>):(null)}
                   {item.data.gildings.gid_3 != null?(<Text style={styles.platinum}>Platinum x{item.data.gid_3}</Text>):(null)}
                 </View>
+                </TouchableOpacity>
             </View>
           );
         }
@@ -222,6 +254,24 @@ class MainPage extends React.Component
         {
           return (
             <View style={styles.postContainer}>
+                <TouchableOpacity onPress={()=>{
+              const postData = {
+                title : item.data.title,
+                author : item.data.author_fullname,
+                score : item.data.score,
+                silver : item.data.gildings.gid_1,
+                gold : item.data.gildings.gid_2,
+                platinum : item.data.gildings.gid_3,
+                link : "https://reddit.com" + item.data.permalink + ".json",
+                url : item.data.url,
+                type : "url",
+                nsfw : item.data.over_18,
+                
+              }
+              this.props.navigation.navigate('viewPost',postData);
+            }} onLongPress={()=>{
+              this.navigateToWebPage(item.data.url,"image", item.data.title);
+            }}>
                 <Text style={styles.titleText}>{item.data.title}</Text>
                 <Text style={styles.username}>u/{item.data.author_fullname}</Text>
                 <Text style={styles.subreddit}>r/{item.data.subreddit}</Text>
@@ -234,6 +284,7 @@ class MainPage extends React.Component
                   {item.data.gildings.gid_2 != null?(<Text style={styles.gold}>Gold x{item.data.gildings.gid_2}</Text>):(null)}
                   {item.data.gildings.gid_3 != null?(<Text style={styles.platinum}>Platinum x{item.data.gildings.gid_3}</Text>):(null)}
                 </View>
+                </TouchableOpacity>
             </View>
             
           );
