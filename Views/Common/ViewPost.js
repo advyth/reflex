@@ -3,7 +3,6 @@ import {View,Text, Dimensions, StyleSheet, ScrollView, FlatList, StatusBar, Acti
 import axios from 'axios';
 import Image from 'react-native-scalable-image';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { tryStatement } from '@babel/types';
 
 const upvoteImg = require('../../assets/upvote-icon.png');
 const SCREEN_WIDTH = Dimensions.get('window').width
