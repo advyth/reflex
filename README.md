@@ -5,7 +5,7 @@
 Reflex is a reddit client built using react native.
 It is sleek, modern, fast and smooth.
 
-#### Visit the wiki for more details.
+[screenshot]()
 
 ### Feel free to fork this app and make your own changes.
 
